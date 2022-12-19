@@ -7,6 +7,9 @@
 // 5. Setup a OpenGL rendering viewport
 // 6. Setup input handlers
 
+use rvv_core;
+
 fn main() {
-    println!("Hello, world!");
+    let app: rvv_core::application::Application = rvv_core::application::Application{name: "Hello".to_string()};
+    rvv_core::application::run(app);
 }
