@@ -10,3 +10,12 @@ pub struct Scene
 {
     objects: Vec<WorldObject>,
 }
+
+impl Scene
+{
+    pub fn load_from_file(_file: String) -> bool
+    {
+        // TODO: What file format do we want to support? Should be same as used for other assets
+        true
+    }
+}

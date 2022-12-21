@@ -4,7 +4,11 @@ pub struct Texture
 {
     file: String,
     //format: TextureFormat,
-    gpu_id: u32
+    gpu_id: u32,
+    
+    // TODO:
+    //transparent: bool,
+    //clamp: ClampFormat,
 }
 
 //pub enum TextureFormat
@@ -12,8 +16,11 @@ pub struct Texture
 //    RGBA(u32),
 //}
 
-pub fn load_texture(file: String) -> Texture
+impl Texture
 {
-    // Load from file
-    Texture{file: file, /*format: RGBA,*/ gpu_id: 0}
+    pub fn load_from_file(_file: String) -> bool
+    {
+        // TODO: What file format do we want to support? PNG, BMP, TIFF?
+        true
+    }
 }

@@ -33,7 +33,7 @@ pub fn run(app: Application)
     // 2. Render a dummy scene (rotating cube + ground grid?)
     // 3. Add a scene module, consider if ecs is what we want to use out of the box (ehh.... Hardcoded object types + vectors might be better short term)
 
-    let mut scene: Scene;
+    let mut _scene: Scene;
 
     event_loop.run(move |event, _, control_flow|
     {
