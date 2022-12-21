@@ -1,3 +1,5 @@
+
+use crate::{scene::Scene};
 pub struct Application
 {
     pub name: String
@@ -24,7 +26,15 @@ pub fn run(app: Application)
     // 2. Closures
     // 3. How egui_glium works
     // 4. How to use egui directly once egui_glium is setup
-    // 5. What egui setup do we want? (Panel for the scene, panel for component editing, viewport window)
+    //
+    // Post learning:
+    //
+    // 1. Setup egui (Panel for the scene, panel for component editing, viewport window)
+    // 2. Render a dummy scene (rotating cube + ground grid?)
+    // 3. Add a scene module, consider if ecs is what we want to use out of the box (ehh.... Hardcoded object types + vectors might be better short term)
+
+    let mut scene: Scene;
+
     event_loop.run(move |event, _, control_flow|
     {
         let next_frame_time = std::time::Instant::now() + std::time::Duration::from_nanos(16_666_667);
