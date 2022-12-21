@@ -2,7 +2,14 @@
 name = "rvv-core"
 version = "0.1.0"
 edition = "2021"
+authors = ["James Feole <jamesfeole87@gmail.com>"]
+license = "MIT"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+egui = { version = "0.20.0", default-features = false, features = ["bytemuck",] }
+egui-winit = { version = "0.20.0", default-features = false }
+ahash = { version = "0.8.1", default-features = false, features = ["no-rng", "std", ] }
+bytemuck = "1.7"
+glium = "0.32"

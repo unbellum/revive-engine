@@ -10,6 +10,6 @@
 use rvv_core;
 
 fn main() {
-    let app: rvv_core::application::Application = rvv_core::application::Application{name: "Hello".to_string()};
+    let app: rvv_core::application::Application = rvv_core::application::Application{name: "Revive Engine Sandbox".to_string()};
     rvv_core::application::run(app);
 }
