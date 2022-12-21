@@ -15,6 +15,16 @@ pub fn run(app: Application)
     let context_builder = glutin::ContextBuilder::new();
     let display = glium::Display::new(window_builder.with_title(app.name), context_builder, &event_loop).unwrap();
 
+    // Setup egui?
+    //let mut egui_glium = egui_glium::EguiGlium::new(&display, &event_loop);
+
+    // TODO: Before moving on need to learn:
+    //
+    // 1. Pattern matching
+    // 2. Closures
+    // 3. How egui_glium works
+    // 4. How to use egui directly once egui_glium is setup
+    // 5. What egui setup do we want? (Panel for the scene, panel for component editing, viewport window)
     event_loop.run(move |event, _, control_flow|
     {
         let next_frame_time = std::time::Instant::now() + std::time::Duration::from_nanos(16_666_667);

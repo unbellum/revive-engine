@@ -13,3 +13,4 @@ egui-winit = { version = "0.20.0", default-features = false }
 ahash = { version = "0.8.1", default-features = false, features = ["no-rng", "std", ] }
 bytemuck = "1.7"
 glium = "0.32"
+egui_glium = "0.20.1"
