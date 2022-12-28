@@ -31,9 +31,13 @@ pub fn run(app: Application)
     //
     // 1. Setup egui (Panel for the scene, panel for component editing, viewport window)
     // 2. Render a dummy scene (rotating cube + ground grid?)
+    //      - Default world object that implements a cube
+    //      - Scene camera setup to view cube
+    //      - Dumb shaders with no lighting
     // 3. Add a scene module, consider if ecs is what we want to use out of the box (ehh.... Hardcoded object types + vectors might be better short term)
 
-    let mut _scene: Scene;
+    let mut scene: Scene;
+    scene.load_basic_scene(&display);
 
     event_loop.run(move |event, _, control_flow|
     {

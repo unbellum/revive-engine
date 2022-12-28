@@ -18,7 +18,7 @@ pub struct Texture
 
 impl Texture
 {
-    pub fn load_from_file(_file: String) -> bool
+    pub fn load_from_file(_display: &glium::Display, _file: String) -> bool
     {
         // TODO: What file format do we want to support? PNG, BMP, TIFF?
         true

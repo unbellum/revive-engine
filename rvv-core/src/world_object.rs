@@ -13,7 +13,16 @@ pub struct WorldObject
 
 impl WorldObject
 {
-    pub fn load_from_file(_file: String) -> bool
+    pub fn new() -> WorldObject
+    {
+        WorldObject {
+            file: "".to_string(),
+            shapes: None,
+            textures: None
+        }
+    }
+
+    pub fn load_from_file(self, _display: &glium::Display, _file: String) -> Self
     {
         // TODO:
         //
@@ -22,6 +31,14 @@ impl WorldObject
         //  * Mesh - Static mesh, animation info
         //  * Texture - Color, bump map, cube map, channel info, metadata (clamping, filtering, etc.)
         //  * Script?
-        true
+        self
+    }
+
+    // Create a cube mesh object and add it to the list of shapes
+    pub fn load_basic_cube(self, display: &glium::Display) -> Self
+    {
+        let cube: Mesh = Mesh::new().load_cube(display);
+        self.shapes.push(cube);
+        self
     }
 }
