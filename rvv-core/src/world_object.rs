@@ -41,4 +41,12 @@ impl WorldObject
         self.shapes.push(cube);
         self
     }
+
+    pub fn render(&self, target: &mut glium::Frame, program: &glium::Program)
+    {
+        for shape in self.shapes.iter()
+        {
+            shape.render(target, program);
+        }
+    }
 }

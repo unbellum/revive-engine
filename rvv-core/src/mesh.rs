@@ -152,4 +152,75 @@ impl Mesh
         self.ibo = Some(glium::IndexBuffer::new(display, glium::index::PrimitiveType::TrianglesList, &indices).unwrap());
         self
     }
+    
+    pub fn render(&self, target: &mut glium::Frame, program: &glium::Program)
+    {
+        use glium::{glutin, Surface};
+        let matrix = [
+            [0.01, 0.0, 0.0, 0.0],
+            [0.0, 0.01, 0.0, 0.0],
+            [0.0, 0.0, 0.01, 0.0],
+            [0.0, 0.0, 0.0, 1.0f32]
+        ];
+        match &self.vbo
+        {
+            VertexBuffer::Pos { vbo } =>
+            {
+                match vbo
+                {
+                    Some(vbo_bound) =>
+                    {
+                        match &self.ibo
+                        {
+                            Some(ibo_bound) =>
+                            {
+                                target.draw(vbo_bound, ibo_bound, &program, &uniform! { matrix: matrix },
+                                    &Default::default()).unwrap();
+                            }
+                            None => {}
+                        }
+                    }
+                    None => {}
+                }
+            }
+            VertexBuffer::PosNorm { vbo } =>
+            {
+                match vbo
+                {
+                    Some(vbo_bound) =>
+                    {
+                        match &self.ibo
+                        {
+                            Some(ibo_bound) =>
+                            {
+                                target.draw(vbo_bound, ibo_bound, &program, &glium::uniforms::EmptyUniforms,
+                                    &Default::default()).unwrap();
+                            }
+                            None => {}
+                        }
+                    }
+                    None => {}
+                }
+            }
+            VertexBuffer::PosNormTex { vbo } =>
+            {
+                match vbo
+                {
+                    Some(vbo_bound) =>
+                    {
+                        match &self.ibo
+                        {
+                            Some(ibo_bound) =>
+                            {
+                                target.draw(vbo_bound, ibo_bound, &program, &glium::uniforms::EmptyUniforms,
+                                    &Default::default()).unwrap();
+                            }
+                            None => {}
+                        }
+                    }
+                    None => {}
+                }
+            }
+        }
+    }
 }

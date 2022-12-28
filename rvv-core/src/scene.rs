@@ -26,10 +26,18 @@ impl Scene
         true
     }
 
-    pub fn load_basic_scene(mut self, display: &glium::Display) -> bool
+    pub fn load_basic_scene(&mut self, display: &glium::Display) -> bool
     {
         let cube: WorldObject = WorldObject::new().load_basic_cube(display);
         self.objects.push(cube);
         true
+    }
+
+    pub fn render(&self, target: &mut glium::Frame, program: &glium::Program)
+    {
+        for obj in self.objects.iter()
+        {
+            obj.render(target, program);
+        }
     }
 }

@@ -39,6 +39,32 @@ pub fn run(app: Application)
     let mut scene: Scene = Scene::new();
     scene.load_basic_scene(&display);
 
+    let vertex_shader_src = r#"
+        #version 140
+
+        in vec3 position;
+
+        uniform mat4 matrix;
+
+        void main() {
+            gl_Position = matrix * vec4(position, 1.0);
+        }
+    "#;
+
+    let fragment_shader_src = r#"
+        #version 140
+
+        out vec4 color;
+
+        void main() {
+            color = vec4(1.0, 0.0, 0.0, 1.0);
+        }
+    "#;
+
+    let program = glium::Program::from_source(&display, vertex_shader_src, fragment_shader_src, None).unwrap();
+
+    println!("Finished loading scene!");
+
     event_loop.run(move |event, _, control_flow|
     {
         let next_frame_time = std::time::Instant::now() + std::time::Duration::from_nanos(16_666_667);
@@ -66,6 +92,8 @@ pub fn run(app: Application)
 
         let mut target = display.draw();
         target.clear_color(0.4, 0.6, 0.8, 1.0);
+        let target_ref = &mut target;
+        scene.render(target_ref, &program);
         target.finish().unwrap();
     });
 }
