@@ -17,8 +17,8 @@ impl WorldObject
     {
         WorldObject {
             file: "".to_string(),
-            shapes: None,
-            textures: None
+            shapes: Vec::new(),
+            textures: Vec::new()
         }
     }
 
@@ -35,7 +35,7 @@ impl WorldObject
     }
 
     // Create a cube mesh object and add it to the list of shapes
-    pub fn load_basic_cube(self, display: &glium::Display) -> Self
+    pub fn load_basic_cube(mut self, display: &glium::Display) -> Self
     {
         let cube: Mesh = Mesh::new().load_cube(display);
         self.shapes.push(cube);

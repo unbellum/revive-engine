@@ -13,13 +13,20 @@ pub struct Scene
 
 impl Scene
 {
+    pub fn new() -> Scene
+    {
+        Scene {
+            objects: Vec::new(),
+        }
+    }
+
     pub fn load_from_file(self, _display: &glium::Display, _file: String) -> bool
     {
         // TODO: What file format do we want to support? Should be same as used for other assets
         true
     }
 
-    pub fn load_basic_scene(self, display: &glium::Display) -> bool
+    pub fn load_basic_scene(mut self, display: &glium::Display) -> bool
     {
         let cube: WorldObject = WorldObject::new().load_basic_cube(display);
         self.objects.push(cube);

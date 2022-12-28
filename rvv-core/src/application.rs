@@ -36,7 +36,7 @@ pub fn run(app: Application)
     //      - Dumb shaders with no lighting
     // 3. Add a scene module, consider if ecs is what we want to use out of the box (ehh.... Hardcoded object types + vectors might be better short term)
 
-    let mut scene: Scene;
+    let mut scene: Scene = Scene::new();
     scene.load_basic_scene(&display);
 
     event_loop.run(move |event, _, control_flow|

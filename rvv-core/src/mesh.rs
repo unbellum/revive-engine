@@ -17,22 +17,47 @@
 // necessitate a new vector for each type in the WorldObject which feel clunky.
 //
 // It looks like enums are decently powerful in rust. May need to learn about them too.
+#[derive(Copy,Clone)]
+pub struct VBOPos
+{
+    position: [f32; 3],
+}
+
+#[derive(Copy,Clone)]
+pub struct VBOPosNorm
+{
+    position: [f32; 3],
+    normal: [f32; 3],
+}
+
+#[derive(Copy,Clone)]
+pub struct VBOPosNormTex
+{
+    position: [f32; 3],
+    normal: [f32; 3],
+    texture: [f32; 2],
+}
+pub enum VertexBuffer
+{
+    Pos{
+        vbo: Option<glium::VertexBuffer<VBOPos> >
+    },
+    PosNorm{
+        vbo: Option<glium::VertexBuffer<VBOPosNorm> >
+    },
+    PosNormTex{
+        vbo: Option<glium::VertexBuffer<VBOPosNormTex> >
+    },
+
+}
 pub struct Mesh
 {
     file: String,
-    format: MeshFormat,
-    vbo: Option<glium::VertexBuffer<f32> >,
+    vbo: VertexBuffer,
     ibo: Option<glium::IndexBuffer<u32> >,
 
     // TODO: Mesh' relative orientation to the parent object
     //transform: Mat4x4,
-}
-
-pub enum MeshFormat
-{
-    Pos,
-    PosNorm,
-    PosNormTex,
 }
 
 impl Mesh
@@ -41,8 +66,7 @@ impl Mesh
     {
         Mesh {
             file: "".to_string(),
-            format: MeshFormat::Pos,
-            vbo: None,
+            vbo: VertexBuffer::Pos { vbo: None },
             ibo: None
         }
     }
@@ -57,44 +81,45 @@ impl Mesh
     // Creates a 2x2x2 cube at the origin, loads the vertex buffer and index buffer onto the GPU
     //
     // TODO: Shader should be stored with the mesh
-    pub fn load_cube(self, display: &glium::Display) -> Self
+    pub fn load_cube(mut self, display: &glium::Display) -> Self
     {
-        let verts: [f32; 72] = [
+        implement_vertex!(VBOPos, position);
+        let verts: [VBOPos; 24] = [
             // Top
-            -1.0,  1.0, -1.0,    // 0
-             1.0,  1.0, -1.0,    // 1
-            -1.0,  1.0,  1.0,    // 2
-             1.0,  1.0,  1.0,    // 3
+            VBOPos{position: [-1.0,  1.0, -1.0]},    // 0
+            VBOPos{position: [ 1.0,  1.0, -1.0]},    // 1
+            VBOPos{position: [-1.0,  1.0,  1.0]},    // 2
+            VBOPos{position: [ 1.0,  1.0,  1.0]},    // 3
 
-            // Bottom
-            -1.0, -1.0, -1.0,   // 4
-             1.0, -1.0, -1.0,   // 5
-            -1.0, -1.0,  1.0,   // 6
-             1.0, -1.0,  1.0,   // 7
+            // Bottom]
+            VBOPos{position: [-1.0, -1.0, -1.0]},   // 4
+            VBOPos{position: [ 1.0, -1.0, -1.0]},   // 5
+            VBOPos{position: [-1.0, -1.0,  1.0]},   // 6
+            VBOPos{position: [ 1.0, -1.0,  1.0]},   // 7
 
-            //Front
-            -1.0,  1.0,  1.0,   // 8
-             1.0,  1.0,  1.0,   // 9
-            -1.0, -1.0,  1.0,   // 10
-             1.0, -1.0,  1.0,   // 11
-    
-            //Back
-            -1.0,  1.0, -1.0,  // 12
-             1.0,  1.0, -1.0,  // 13
-            -1.0, -1.0, -1.0,  // 14
-             1.0, -1.0, -1.0,  // 15
-    
-            //Left
-            -1.0,  1.0,  1.0,  // 16
-            -1.0,  1.0, -1.0,  // 17
-            -1.0, -1.0,  1.0,  // 18
-            -1.0, -1.0, -1.0,  // 19
-    
-            //Right
-            1.0,  1.0,  1.0,   // 20
-            1.0,  1.0, -1.0,   // 21
-            1.0, -1.0,  1.0,   // 22
-            1.0, -1.0, -1.0    // 23
+            //Front]
+            VBOPos{position: [-1.0,  1.0,  1.0]},   // 8
+            VBOPos{position: [ 1.0,  1.0,  1.0]},   // 9
+            VBOPos{position: [-1.0, -1.0,  1.0]},   // 10
+            VBOPos{position: [ 1.0, -1.0,  1.0]},   // 11
+
+            //Back]
+            VBOPos{position: [-1.0,  1.0, -1.0]},  // 12
+            VBOPos{position: [ 1.0,  1.0, -1.0]},  // 13
+            VBOPos{position: [-1.0, -1.0, -1.0]},  // 14
+            VBOPos{position: [ 1.0, -1.0, -1.0]},  // 15
+
+            //Left]
+            VBOPos{position: [-1.0,  1.0,  1.0]},  // 16
+            VBOPos{position: [-1.0,  1.0, -1.0]},  // 17
+            VBOPos{position: [-1.0, -1.0,  1.0]},  // 18
+            VBOPos{position: [-1.0, -1.0, -1.0]},  // 19
+
+            //Right]
+            VBOPos{position: [ 1.0,  1.0,  1.0]},   // 20
+            VBOPos{position: [ 1.0,  1.0, -1.0]},   // 21
+            VBOPos{position: [ 1.0, -1.0,  1.0]},   // 22
+            VBOPos{position: [ 1.0, -1.0, -1.0]}    // 23
         ];
 
         let indices: [u32; 36] = [
@@ -123,7 +148,7 @@ impl Mesh
             22, 23, 21
         ];
 
-        self.vbo = Some(glium::VertexBuffer::new(display, &verts).unwrap());
+        self.vbo = VertexBuffer::Pos{ vbo: Some(glium::VertexBuffer::new(display, &verts).unwrap())};
         self.ibo = Some(glium::IndexBuffer::new(display, glium::index::PrimitiveType::TrianglesList, &indices).unwrap());
         self
     }
