@@ -1,10 +1,9 @@
-use crate::{mesh::Mesh, texture::Texture};
+use crate::{mesh::Mesh};
 
 pub struct WorldObject
 {
     file: String,
     shapes: Vec<Mesh>,
-    textures: Vec<Texture>,
 
     // TODO: Object's orientation in the world
     //pos: Vec3,
@@ -18,7 +17,6 @@ impl WorldObject
         WorldObject {
             file: "".to_string(),
             shapes: Vec::new(),
-            textures: Vec::new()
         }
     }
 

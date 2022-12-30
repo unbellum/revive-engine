@@ -1,22 +1,5 @@
+use crate::{texture::Texture};
 
-// TODO: Need to learn some generics to move forward here. Want a general Mesh object
-// but it needs to know what type of vertices it will use at run time. I expect that
-// the best way to do this is to define the Mesh type when the mesh object is created.
-//
-// Workflow: User creates a new world object in the scene which defaults to the cube
-// mesh in the editor. This cube mesh will only contain position information for now.
-// Once the user decides which mesh to replace the cube with they can then load a
-// new mesh from file.
-//
-// This raises the problem that the WorldObject stores a vector of Mesh objects and
-// these must all have matching types. Having the Mesh object be a generic interface
-// also does not work in the same way that you cannot store Vec<Vec<Unknowtype> >. You
-// must know when the object is declared what will go into it.
-//
-// Then how do we solve this? A new type/interface per mesh style? This would then
-// necessitate a new vector for each type in the WorldObject which feel clunky.
-//
-// It looks like enums are decently powerful in rust. May need to learn about them too.
 #[derive(Copy,Clone)]
 pub struct VBOPos
 {
@@ -37,6 +20,7 @@ pub struct VBOPosNormTex
     normal: [f32; 3],
     texture: [f32; 2],
 }
+
 pub enum VertexBuffer
 {
     Pos{
@@ -50,11 +34,108 @@ pub enum VertexBuffer
     },
 
 }
+
+/// Handles the rendering of a single surface.
+pub struct Surface
+{
+    vbo: VertexBuffer,
+    ibo: Option<glium::IndexBuffer<u32> >,
+    textures: Vec<Texture>,
+}
+
+impl Surface
+{
+    pub fn new() -> Surface
+    {
+        Surface {
+            vbo: VertexBuffer::Pos { vbo: None },
+            ibo: None,
+            textures: Vec::new(),
+        }
+    }
+    
+    pub fn render(&self, target: &mut glium::Frame, program: &glium::Program)
+    {
+        use glium::{Surface};
+        let matrix = [
+            [0.01, 0.0, 0.0, 0.0],
+            [0.0, 0.01, 0.0, 0.0],
+            [0.0, 0.0, 0.01, 0.0],
+            [0.0, 0.0, 0.0, 1.0f32]
+        ];
+        // Wanted to create a generic function to handle some of the repetition but it does like
+        // mixing generics with the enums for the surface format. Ideally would like a small function
+        // to take in the vbo as Option<glium::VertexBuffer<T> > as the rest of the code is the same.
+        //
+        // Will a macro work better here?
+        match &self.vbo
+        {
+            VertexBuffer::Pos { vbo } =>
+            {
+                match vbo
+                {
+                    Some(vbo_bound) =>
+                    {
+                        match &self.ibo
+                        {
+                            Some(ibo_bound) =>
+                            {
+                                target.draw(vbo_bound, ibo_bound, &program, &uniform! { matrix: matrix },
+                                    &Default::default()).unwrap();
+                            }
+                            None => {}
+                        }
+                    }
+                    None => {}
+                }
+            }
+            VertexBuffer::PosNorm { vbo } =>
+            {
+                match vbo
+                {
+                    Some(vbo_bound) =>
+                    {
+                        match &self.ibo
+                        {
+                            Some(ibo_bound) =>
+                            {
+                                target.draw(vbo_bound, ibo_bound, &program, &uniform! { matrix: matrix },
+                                    &Default::default()).unwrap();
+                            }
+                            None => {}
+                        }
+                    }
+                    None => {}
+                }
+            }
+            VertexBuffer::PosNormTex { vbo } =>
+            {
+                match vbo
+                {
+                    Some(vbo_bound) =>
+                    {
+                        match &self.ibo
+                        {
+                            Some(ibo_bound) =>
+                            {
+                                target.draw(vbo_bound, ibo_bound, &program, &uniform! { matrix: matrix },
+                                    &Default::default()).unwrap();
+                            }
+                            None => {}
+                        }
+                    }
+                    None => {}
+                }
+            }
+        }
+    }
+}
+
+/// Contains all the shape information needed to draw an object, mainly surfaces and textures.
 pub struct Mesh
 {
     file: String,
-    vbo: VertexBuffer,
-    ibo: Option<glium::IndexBuffer<u32> >,
+    surfaces: Vec<Surface>,
 
     // TODO: Mesh' relative orientation to the parent object
     //transform: Mat4x4,
@@ -66,8 +147,7 @@ impl Mesh
     {
         Mesh {
             file: "".to_string(),
-            vbo: VertexBuffer::Pos { vbo: None },
-            ibo: None
+            surfaces: Vec::new(),
         }
     }
 
@@ -148,79 +228,19 @@ impl Mesh
             22, 23, 21
         ];
 
-        self.vbo = VertexBuffer::Pos{ vbo: Some(glium::VertexBuffer::new(display, &verts).unwrap())};
-        self.ibo = Some(glium::IndexBuffer::new(display, glium::index::PrimitiveType::TrianglesList, &indices).unwrap());
+        let mut surface: Surface = Surface::new();
+
+        surface.vbo = VertexBuffer::Pos{ vbo: Some(glium::VertexBuffer::new(display, &verts).unwrap())};
+        surface.ibo = Some(glium::IndexBuffer::new(display, glium::index::PrimitiveType::TrianglesList, &indices).unwrap());
+        self.surfaces.push(surface);
         self
     }
     
     pub fn render(&self, target: &mut glium::Frame, program: &glium::Program)
     {
-        use glium::{glutin, Surface};
-        let matrix = [
-            [0.01, 0.0, 0.0, 0.0],
-            [0.0, 0.01, 0.0, 0.0],
-            [0.0, 0.0, 0.01, 0.0],
-            [0.0, 0.0, 0.0, 1.0f32]
-        ];
-        match &self.vbo
+        for surface in self.surfaces.iter()
         {
-            VertexBuffer::Pos { vbo } =>
-            {
-                match vbo
-                {
-                    Some(vbo_bound) =>
-                    {
-                        match &self.ibo
-                        {
-                            Some(ibo_bound) =>
-                            {
-                                target.draw(vbo_bound, ibo_bound, &program, &uniform! { matrix: matrix },
-                                    &Default::default()).unwrap();
-                            }
-                            None => {}
-                        }
-                    }
-                    None => {}
-                }
-            }
-            VertexBuffer::PosNorm { vbo } =>
-            {
-                match vbo
-                {
-                    Some(vbo_bound) =>
-                    {
-                        match &self.ibo
-                        {
-                            Some(ibo_bound) =>
-                            {
-                                target.draw(vbo_bound, ibo_bound, &program, &glium::uniforms::EmptyUniforms,
-                                    &Default::default()).unwrap();
-                            }
-                            None => {}
-                        }
-                    }
-                    None => {}
-                }
-            }
-            VertexBuffer::PosNormTex { vbo } =>
-            {
-                match vbo
-                {
-                    Some(vbo_bound) =>
-                    {
-                        match &self.ibo
-                        {
-                            Some(ibo_bound) =>
-                            {
-                                target.draw(vbo_bound, ibo_bound, &program, &glium::uniforms::EmptyUniforms,
-                                    &Default::default()).unwrap();
-                            }
-                            None => {}
-                        }
-                    }
-                    None => {}
-                }
-            }
+            surface.render(target, program);
         }
     }
 }
